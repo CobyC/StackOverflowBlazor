@@ -1,0 +1,20 @@
+﻿@inject Microsoft.AspNetCore.Components.WebAssembly.Hosting.IWebAssemblyHostEnvironment env
+
+@page "/"
+@using BlazorWasmApp.Components
+Welcome to your new app.
+
+<ZoomableImageComponent ImageUrlPath="images/Capricorn.png"
+                        ImageWidthInPx=200
+                        ImageHeightInPx=150
+                        ShowResetButton=true
+                        DefaultScaleBy=0.1f />
+
+<ZoomableImageComponent ImageUrlPath="images/RedbushCappuccino.png"
+                        ImageWidthInPx=200
+                        ImageHeightInPx=150
+                        ShowResetButton=true
+                        DefaultScaleBy=0.1f />
+
+
+

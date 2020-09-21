@@ -1,0 +1,86 @@
+﻿@page "/"
+
+<button @onclick="AddContent">1st Update</button>
+<button @onclick="AddSecondContent">2nd Update</button>
+<button @onclick="CheckContent">Check Update</button>
+
+<CascadingValue Value="this">
+    @foreach (var cntr in CounterReferences)
+    {
+        <Counter></Counter>
+    }
+</CascadingValue>
+
+@code {
+    RenderFragment<Counter> DataContent { get; set; }
+
+    List<Counter> _CounterReferences;
+    public List<Counter> CounterReferences
+    {
+        get
+        {
+            return _CounterReferences = _CounterReferences != null ? _CounterReferences : new List<Counter>();
+
+        }
+        set => _CounterReferences = value;
+    }
+
+    //public List<Counter> CounterReference = new List<Counter>();
+    //int seq = 0;
+    void AddContent()
+    {
+        //CounterReferences.Clear();
+        //int seq = 0;
+        //for (int i = 0; i < 3; i++)
+        //{
+        //    seq++;
+        //    if (!CounterReferences.Any(r => r.cntrRef.Id == seq.ToString()))
+        //        CounterReferences.Add(new Counter() { cntrRef = new ElementReference(seq.ToString()) });
+        //}
+        //StateHasChanged();
+
+        //ChildContent = (Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) =>
+        //{
+        //    int seq = 0;
+        //    for (int i = 0; i < 3; i++)
+        //    {
+        //        builder.OpenComponent<Counter>(seq++);
+        //        builder.AddComponentReferenceCapture(seq++, ins =>
+        //        {
+        //            CounterReference.Add((Counter)ins);
+        //            Console.WriteLine($"ins : {ins.GetType().FullName}");
+        //        });
+        //        builder.CloseComponent();
+        //    }
+        //};
+    }
+
+    void AddSecondContent()
+    {
+        //CounterReferences.Clear();
+        //int seq = 0;
+        //for (int i = 0; i < 2; i++)
+        //{
+        //    seq++;
+        //    if (!CounterReferences.Any(r => r.cntrRef.Id == seq.ToString()))
+        //        CounterReferences.Add(new Counter() { cntrRef = new ElementReference(seq.ToString()) });
+        //}
+        //StateHasChanged();
+
+        //DataContent = (Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) =>
+        //{
+        //    int seq = 0;
+        //    for (int i = 0; i < 2; i++)
+        //    {
+        //        builder.OpenComponent<Counter>(seq++);
+        //        builder.AddComponentReferenceCapture(seq++, ins => { CounterReference.Add((Counter)ins); });
+        //        builder.CloseComponent();
+        //    }
+        //};
+    }
+
+    void CheckContent()
+    {
+        Console.WriteLine(CounterReferences.Count);
+    }
+}

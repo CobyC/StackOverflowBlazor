@@ -1,0 +1,44 @@
+﻿
+@page "/yesornopage"
+
+<h3>YesOrNoPage</h3>
+
+<button @onclick="@(() => { YesOrNoDialogVisible = !YesOrNoDialogVisible; })"
+        class="btn btn-light">
+    Show Dialog
+</button>
+
+<label>You clicked : @myResult</label>
+
+@*<SfDialog Width="500px" IsModal="true" @bind-Visible="@YesOrNoDialogVisible">
+    <DialogTemplates>
+        <Header>@YesOrNoDialogHeader </Header>
+        <Content>@YesOrNoDialogMessage</Content>
+    </DialogTemplates>
+    <DialogButtons>
+        <DialogButton Content="Yes" IsPrimary="true" OnClick="@(()=> { OnYesOrNoButtonClick(DialogYesOrNoResult.Yes); })" />
+        <DialogButton Content="No" OnClick="@(()=> { OnYesOrNoButtonClick(DialogYesOrNoResult.No); })" />
+    </DialogButtons>
+</SfDialog>*@
+
+@code {
+    protected enum DialogYesOrNoResult
+    {
+        Yes,
+        No,
+        None
+    }
+
+    string YesOrNoDialogHeader = "What do you want?";
+    string YesOrNoDialogMessage = "Answer Yes or No";
+    bool YesOrNoDialogVisible = false;
+    DialogYesOrNoResult myResult = DialogYesOrNoResult.None;
+
+    protected void OnYesOrNoButtonClick(DialogYesOrNoResult result)
+    {
+        myResult = result;
+
+        YesOrNoDialogVisible = false;
+    }
+
+}

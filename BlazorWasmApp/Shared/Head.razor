@@ -1,0 +1,21 @@
+﻿@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
+@inject IWebAssemblyHostEnvironment hostEnv
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<base href="/" />
+<link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+<link href="css/app.css" rel="stylesheet" />
+<link href="_content/Syncfusion.Blazor/styles/bootstrap4.css" rel="stylesheet" />
+@*Check the environment value*@
+@*@if (hostEnv.IsDevelopment())
+{
+    <title>BlazorWasmApp - In Debug</title>
+    <link href="css/debug.css" rel="stylesheet" />
+}
+else
+{
+    <title>BlazorWasmApp - Not Debug</title>
+    <link href="css/live.css" rel="stylesheet" />
+}*@
+@code {}

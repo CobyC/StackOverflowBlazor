@@ -1,0 +1,442 @@
+﻿@page "/ZoomImage"
+@using System.Text;
+
+<div style="display: block;
+        width: 400px;
+        height: 300px;
+        overflow: hidden;">
+    <div class="imageParent" style="width:100%;height:100%">
+        <div class="imageChild"
+             @onmousewheel="MouseWheelScale"
+             @onmousemove="MouseMoving"
+             style="@ZoomStyle">
+            @*this div is used just for moving around when zoomed*@
+        </div>
+    </div>
+</div>
+<div style="display:block">
+    <button @onclick="ResetImg">Reset</button>
+</div>
+<div style="display: block;
+        width: 400px;
+        height: 300px;
+        overflow: hidden;">
+    <div class="imageParent" style="@ParentStyle"
+         @onmousewheel="MouseWheelParentScale">
+        <div style="width:100%;height:100%">
+            <div class="imageChild"
+                 @onmousemove="MouseMoveParent"
+                 style="@ZoomStyle">
+                @*this div is used just for moving around when zoomed*@
+            </div>
+        </div>
+    </div>
+</div>
+<div style="display:block">
+    <button @onclick="ResetParentImg">Reset</button>
+</div>
+<div style="display:block; width:100%;height:150px;">
+    <textarea readonly="readonly" style="width:33%;height:100%;">@logedBgPosInfo</textarea>
+    <textarea readonly="readonly" style="width:33%;height:100%;">@logedInfo</textarea>
+    <textarea readonly="readonly" style="width:33%;height:100%;">@logedMoveInfo</textarea>
+</div>
+
+
+@code{
+        /*
+        move top and left by same amount of width and height
+    so if left -10% then width 110% and top -10 height is 110%
+    if left 10% then width 90% and top 10 then height 90%
+
+    https://stackoverflow.com/questions/63626228/how-to-make-image-zoom-in-out-with-mouse-wheel-in-blazor
+
+        //restrictions
+        https://github.com/dotnet/aspnetcore/issues/8241
+        https://github.com/dotnet/aspnetcore/issues/12259
+
+        //js example of magnify.
+        https://codepen.io/galulex/pen/eNZRVq
+
+        //might help.
+
+            */
+
+        float defaultScale = 1.0f;
+        float defaultParentScale = 1.0f;
+        string logedInfo = "";
+        string logedMoveInfo = "";
+        string logedBgPosInfo = "";
+
+        //default position of bacground..
+        int BackgroundX = 50;
+        int BackgroundY = 50;
+
+        int positionLeft = 0;
+        int positionTop = 0;
+
+    //the default settings used to display the image in the child div
+    private Dictionary<string, string> _ZoomStyleDictionary;
+    Dictionary<string, string> ZoomStyleDictionary
+    {
+        get
+        {
+            if (_ZoomStyleDictionary == null)
+            {
+                ResetImg();
+
+            }
+
+            return _ZoomStyleDictionary;
+        }
+    }
+
+    private Dictionary<string, string> _ZoomParentStyleDictionary;
+    Dictionary<string, string> ZoomParentStyleDictionary
+    {
+        get
+        {
+            if (_ZoomParentStyleDictionary == null)
+            {
+                ResetParentImg();
+            }
+
+            return _ZoomParentStyleDictionary;
+        }
+    }
+
+    protected void ResetImg()
+    {
+        BackgroundX = 1;
+        BackgroundY = 1;
+        defaultScale = 1.0f;
+
+        _ZoomStyleDictionary = new Dictionary<string, string>();
+        _ZoomStyleDictionary.Add("width", "100%");
+        _ZoomStyleDictionary.Add("height", "100%");
+        _ZoomStyleDictionary.Add("position", "relative");
+        _ZoomStyleDictionary.Add("background-size", "cover");
+        _ZoomStyleDictionary.Add("background-image", "URL(images/Capricorn.png)");
+        //_ZoomStyleDictionary.Add("background-position", $"{BackgroundX}% {BackgroundY}%");
+        StateHasChanged();
+
+    }
+
+    protected void ResetParentImg()
+    {
+        positionLeft = 0;
+        positionTop = 0;
+        defaultParentScale = 1.0f;
+        defaultMinPosition = -0;
+        defaultMaxPosition = 0;
+        _ZoomParentStyleDictionary = new Dictionary<string, string>();
+        _ZoomParentStyleDictionary.Add("width", "100%");
+        _ZoomParentStyleDictionary.Add("height", "100%");
+        _ZoomParentStyleDictionary.Add("position", "relative");
+        _ZoomParentStyleDictionary.Add("left", $"{positionLeft}%");
+        _ZoomParentStyleDictionary.TryAdd("top", $"{positionTop}%");
+        StateHasChanged();
+
+    }
+
+    string ZoomStyle { get => DictionaryToCss(ZoomStyleDictionary); }
+    string ParentStyle { get => DictionaryToCss(ZoomParentStyleDictionary); }
+
+    private string DictionaryToCss(Dictionary<string, string> styleDictionary)
+    {
+        StringBuilder sb = new StringBuilder();
+        foreach (var kvp in styleDictionary.AsEnumerable())
+        {
+            sb.AppendFormat("{0}:{1};", kvp.Key, kvp.Value);
+        }
+        return sb.ToString();
+    }
+
+    double oldClientX = 0;
+    double oldClientY = 0;
+    int defaultMinPosition = -100;//to the top and left
+    int defaultMaxPosition = 100;//to the right and down
+    int defaultMoveBy = 5;
+    protected void MouseMoveParent(MouseEventArgs e)
+    {
+        logedMoveInfo = LogMouseArgs(e);
+        if (e.Buttons != 1)
+        {
+            oldClientX = e.ClientX;
+            oldClientY = e.ClientY;
+            return;
+        }
+
+        //moving mouse right
+        if (oldClientX < e.ClientX)
+        {
+            Console.WriteLine("Right");
+            if ((positionLeft + defaultMoveBy) <= defaultMaxPosition)// && defaultMinPosition <= positionLeft)
+            {
+                positionLeft += defaultMoveBy;
+            }
+        }
+
+        //moving mouse left
+        if (oldClientX > e.ClientX)
+        {
+            Console.WriteLine("Left");
+            if (defaultMinPosition < (positionLeft - defaultMoveBy))// && positionLeft <= defaultMaxPosition)
+            {
+                positionLeft -= defaultMoveBy;
+            }
+        }
+        oldClientX = e.ClientX;
+
+        //moving mouse down
+        if (oldClientY < e.ClientY)
+        {
+            Console.WriteLine("Down");
+            if ((positionTop + defaultMoveBy) <= defaultMaxPosition)// && defaultMinPosition <= positionTop)
+            {
+                positionTop += defaultMoveBy;
+            }
+        }
+
+        //moving mouse up
+        if (oldClientY > e.ClientY)
+        {
+            Console.WriteLine($"Up :{positionTop}");
+            if ((positionTop - defaultMoveBy) > defaultMinPosition)// && positionTop <= defaultMaxPosition)
+            {
+                positionTop -= defaultMoveBy;
+            }
+        }
+
+        oldClientY = e.ClientY;
+
+        UpdateScaleAndPosition();
+
+        logedBgPosInfo = $"{positionLeft}% {positionTop}%";
+    }
+
+    protected void MouseMoveBg(MouseEventArgs e)
+    {
+        LogMouseArgs(e);
+
+        //moving mouse right
+        if (oldClientX < e.ClientX)
+        {
+            Console.WriteLine("Right");
+            if (0 < BackgroundX && (BackgroundX + 5) < 100)
+            {
+                BackgroundX += 5;
+            }
+        }
+
+        //moving mouse left
+        if (oldClientX > e.ClientX)
+        {
+            Console.WriteLine("Left");
+            if (0 < (BackgroundX - 5) && BackgroundX < 100)
+            {
+                BackgroundX -= 5;
+            }
+        }
+        oldClientX = e.ClientX;
+
+        //moving mouse down
+        if (oldClientY < e.ClientY)
+        {
+            Console.WriteLine("Down");
+
+            if (0 < BackgroundY && (BackgroundY + 5) < 100)
+            {
+                BackgroundY += 5;
+            }
+
+        }
+
+        //moving mouse up
+        if (oldClientY > e.ClientY)
+        {
+            Console.WriteLine($"Up :{BackgroundY}");
+
+            if (0 < (BackgroundY - 5) && BackgroundY < 100)
+            {
+                BackgroundY -= 5;
+            }
+
+        }
+
+        oldClientY = e.ClientY;
+
+
+        if (!ZoomStyleDictionary.TryAdd("background-position", $"{BackgroundX}% {BackgroundY}%"))
+        {
+            ZoomStyleDictionary["background-position"] = $"{BackgroundX}% {BackgroundY}%";
+        }
+
+        logedBgPosInfo = $"{BackgroundX}% {BackgroundY}%";
+    }
+
+    protected string LogMouseArgs(EventArgs args)
+    {
+        System.Text.StringBuilder logBuilder = new System.Text.StringBuilder();
+
+        if (args is WheelEventArgs wArgs)
+        {
+            logBuilder.AppendFormat("DeltaX:{0} DeltaY:{1} DeltaZ:{2}", wArgs.DeltaX, wArgs.DeltaY, wArgs.DeltaZ)
+                .Append(Environment.NewLine);
+        }
+
+        if (args is DragEventArgs dArgs)
+        {
+            logBuilder.AppendFormat("DataTrafsfer:{0}", dArgs.DataTransfer)
+                .Append(Environment.NewLine);
+        }
+
+        if (args is MouseEventArgs mArgs)
+        {
+            logBuilder.AppendFormat("ClientX:{0} ClientY:{1} Buttons:{2}", mArgs.ClientX, mArgs.ClientY, mArgs.Buttons)
+                .Append(Environment.NewLine);
+            logBuilder.AppendFormat("ScreenX:{0} ScreenY:{1} AltKey:{2}", mArgs.ScreenX, mArgs.ScreenY, mArgs.AltKey)
+                .Append(Environment.NewLine);
+            logBuilder.AppendFormat("Detail:{0} MetaKey:{1} Type:{2}", mArgs.Detail, mArgs.MetaKey, mArgs.Type)
+                .Append(Environment.NewLine);
+            logBuilder.AppendFormat("AltKey:{0} CtrlKey:{1} ShiftKey:{2}", mArgs.AltKey, mArgs.CtrlKey, mArgs.ShiftKey)
+                .Append(Environment.NewLine);
+        }
+
+        return logBuilder.ToString();
+    }
+
+    protected void MouseWheelScale(WheelEventArgs e)
+    {
+        logedInfo = LogMouseArgs(e);
+
+        //holding shift stops the page from scrolling
+        if (e.ShiftKey == true)
+        {
+            if (e.DeltaY > 0)
+            {
+                defaultScale = ((defaultScale + 0.1f) >= 5) ? defaultScale = 5f : defaultScale += 0.1f;
+                if (!ZoomStyleDictionary.TryAdd("transform", $"scale({defaultScale})"))
+                {
+                    ZoomStyleDictionary["background-image"] = "URL(images/Capricorn.png)";
+                    ZoomStyleDictionary["transform"] = $"scale({defaultScale})";
+                }
+
+            }
+            if (e.DeltaY < 0)
+            {
+                defaultScale = ((defaultScale - 0.1f) <= 0) ? defaultScale = 0.1f : defaultScale -= 0.1f;
+                if (!ZoomStyleDictionary.TryAdd("transform", $"scale({defaultScale})"))
+                {
+                    ZoomStyleDictionary["background-image"] = "URL(images/Capricorn.png)";
+                    ZoomStyleDictionary["transform"] = $"scale({defaultScale})";
+                }
+            }
+        }
+    }
+
+    protected void MouseWheelParentScale(WheelEventArgs e)
+    {
+        //this also needs to increase the position limits for movement
+        logedInfo = LogMouseArgs(e);
+
+        float IncreaseScale()
+        {
+            defaultMaxPosition += (defaultMoveBy * 2);
+            defaultMinPosition -= (defaultMoveBy * 2);
+
+            return defaultParentScale += 0.1f;
+        }
+
+        float DecreaseScale()
+        {
+            defaultMaxPosition -= (defaultMoveBy * 2);
+            defaultMinPosition += (defaultMoveBy * 2);
+            //fix descaling
+
+            if (defaultParentScale <= 1)
+            {
+                positionLeft = 0;
+                positionTop = 0;
+            }
+            else
+            {
+                //left can not be more than max position
+                if (defaultMaxPosition < positionLeft)
+                {
+                    positionLeft = defaultMaxPosition;
+                }
+
+                //left can not be more than min position
+                if (defaultMinPosition > positionLeft)
+                {
+                    positionLeft = defaultMinPosition;
+                }
+
+                if (defaultMaxPosition < positionTop)
+                {
+                    positionTop = defaultMaxPosition;
+                }
+
+                if (defaultMinPosition > positionTop)
+                {
+                    positionTop = defaultMinPosition;
+                }
+            }
+
+            return defaultParentScale -= 0.1f;
+        }
+
+        //holding shift stops the page from scrolling
+        if (e.ShiftKey == true)
+        {
+            if (e.DeltaY > 0)
+            {
+                defaultParentScale = ((defaultParentScale + 0.1f) >= 5) ? defaultParentScale = 5f : IncreaseScale();
+            }
+            if (e.DeltaY < 0)
+            {
+                defaultScale = ((defaultParentScale - 0.1f) <= 0) ? defaultParentScale = 0.1f : DecreaseScale();
+            }
+
+            UpdateScaleAndPosition();
+        }
+    }
+
+    void UpdateScaleAndPosition()
+    {
+        if (!ZoomParentStyleDictionary.TryAdd("transform", $"scale({defaultParentScale})"))
+        {
+            ZoomParentStyleDictionary["transform"] = $"scale({defaultParentScale})";
+        }
+
+        if (!ZoomParentStyleDictionary.TryAdd("transform", $"scale({defaultParentScale})"))
+        {
+            ZoomParentStyleDictionary["transform"] = $"scale({defaultParentScale})";
+        }
+
+        if (!ZoomParentStyleDictionary.TryAdd("left", $"{positionLeft}%"))
+        {
+            ZoomParentStyleDictionary["left"] = $"{positionLeft}%";
+        }
+
+        if (!ZoomParentStyleDictionary.TryAdd("top", $"{positionTop}%"))
+        {
+            ZoomParentStyleDictionary["top"] = $"{positionTop}%";
+        }
+    }
+
+    protected void MouseMoving(MouseEventArgs e)
+    {
+        logedMoveInfo = LogMouseArgs(e);
+        if (e.Buttons == 1)
+        {
+            MouseMoveBg(e);
+        }
+    }
+
+    protected void Dragging(DragEventArgs e)
+    {
+        e.DataTransfer = null;
+    }
+
+}
