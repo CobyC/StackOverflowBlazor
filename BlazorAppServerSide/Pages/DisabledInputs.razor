@@ -1,0 +1,50 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using BlazorAppServerSide.Components
+@page "/disabledcontrols"
+<h3>DisabledInputs</h3>
+
+<EditForm Model="someModel">
+    <h5> Standard input</h5>
+    <div>
+        <InputText disabled="@componentStates[0]" @bind-Value="@someModel.val1" />
+        <button @onclick="() => SwitchComponentDisabledState(0)">@SwitchToState(0)</button>
+        <InputText disabled="@componentStates[1]" @onclick="() => SwitchComponentDisabledState(1)" @bind-Value="@someModel.val2" />
+        <button @onclick="() => SwitchComponentDisabledState(1)">@SwitchToState(1)</button>
+        <InputText disabled="@componentStates[2]" @onclick="() => SwitchComponentDisabledState(2)" @bind-Value="@someModel.val3" />
+        <button @onclick="() => SwitchComponentDisabledState(2)">@SwitchToState(2)</button>
+    </div>
+    <h5> Custom input</h5>
+    <div>
+        <CustomInputText @bind-Value="@someModel.val1" />
+        <CustomInputText @bind-Value="@someModel.val2" />
+        <CustomInputText @bind-Value="@someModel.val3" />
+    </div>
+</EditForm>
+
+@code {
+
+    bool[] componentStates = new bool[] { false, false, false };
+
+    protected string SwitchToState(int compIndex) => componentStates[compIndex] ? "Enable" : "Disable";
+
+    protected void SwitchComponentDisabledState(int componentIndex) => componentStates[componentIndex] = !componentStates[componentIndex];
+
+
+    private BlankModel _blankModel;
+    public BlankModel someModel
+    {
+        get
+        {
+            if (_blankModel == null)
+                _blankModel = new BlankModel();
+            return _blankModel;
+        }
+    }
+
+    public class BlankModel
+    {
+        public string val1 { get; set; }
+        public string val2 { get; set; }
+        public string val3 { get; set; }
+    }
+}

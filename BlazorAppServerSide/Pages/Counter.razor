@@ -1,0 +1,35 @@
+﻿@page "/counter"
+@using BlazorAppServerSide.Components
+
+<h1>Counter</h1>
+
+<p>Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+
+@CreateFragment()
+
+@CreateExampleFragment()
+
+@code {
+
+    RenderFragment CreateFragment() => builder =>
+    {
+        builder.OpenComponent(0, typeof(MyComponent));
+        builder.CloseComponent();
+    };
+
+    RenderFragment CreateExampleFragment() => builder =>
+    {
+        builder.OpenComponent(0, typeof(Example));
+        builder.CloseComponent();
+    };
+
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+}

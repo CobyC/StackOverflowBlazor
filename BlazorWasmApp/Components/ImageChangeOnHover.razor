@@ -1,0 +1,30 @@
+﻿<div class="default-image"
+     @onmouseout="@OnMouseOut"
+     @onmouseover="@OnMouseOver">
+    <div class="@_HoverImageCSSClass">
+        @*this will be used for the transformed image*@
+    </div>
+</div>
+
+@code {
+
+    bool _IsHovering = false;
+    string _HoverImageCSSClass = "";
+
+    protected void OnMouseOver(MouseEventArgs mouseEvent)
+    {
+        if (!_IsHovering)
+        {
+            _IsHovering = true;
+            _HoverImageCSSClass = "hovering";
+            StateHasChanged();
+        }
+    }
+
+    protected void OnMouseOut(MouseEventArgs mouseEvent)
+    {
+        _HoverImageCSSClass = "";
+        _IsHovering = false;
+        StateHasChanged();
+    }
+}

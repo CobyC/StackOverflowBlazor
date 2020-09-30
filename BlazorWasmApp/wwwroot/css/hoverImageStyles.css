@@ -1,0 +1,27 @@
+﻿
+.default-image {
+    display: block;
+    width: 200px;
+    height: 200px;
+    background-image: url('/images/Cap1.png');    
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.hovering {
+    display: block;
+    width: 200px;
+    height: 200px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url('/images/Cap1.png');
+    transform: scale(2.0);
+}
+
+    .hovering:hover {
+        transition-delay: 1s;
+        transition-duration: 0s;           
+        background-image: url('/images/Cap2.png');        
+    }
+

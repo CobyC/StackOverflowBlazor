@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\images\Capricorn.png" />
+    <None Include="wwwroot\images\Cap1.png" />
   </ItemGroup>
 
 </Project>

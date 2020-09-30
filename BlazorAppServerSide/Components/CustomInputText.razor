@@ -1,0 +1,14 @@
+﻿@inherits InputText
+
+<InputText disabled="@_IsDisabled" @bind-Value="@CurrentValue" @attributes="AdditionalAttributes" class="@CssClass"
+           @oninput="EventCallback.Factory.CreateBinder<string>(this, __value => CurrentValueAsString = __value, CurrentValueAsString)" />
+<button @onclick="ChangeDisabledState">
+    @(_IsDisabled?"Enable":"Disable" )
+</button>
+
+@code {
+
+    private bool _IsDisabled { get; set; } = false;
+
+    protected void ChangeDisabledState() => _IsDisabled = !_IsDisabled;
+}

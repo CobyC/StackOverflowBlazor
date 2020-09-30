@@ -3,17 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackOverflowBlazor.Server", "StackOverflowBlazor\Server\StackOverflowBlazor.Server.csproj", "{B0314D36-BE34-4D3E-9A5F-0094F877C6E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StackOverflowBlazor.Server", "StackOverflowBlazor\Server\StackOverflowBlazor.Server.csproj", "{B0314D36-BE34-4D3E-9A5F-0094F877C6E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackOverflowBlazor.Client", "StackOverflowBlazor\Client\StackOverflowBlazor.Client.csproj", "{8ED99C51-9D9C-4F17-947B-CF26EC6D4DDC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StackOverflowBlazor.Client", "StackOverflowBlazor\Client\StackOverflowBlazor.Client.csproj", "{8ED99C51-9D9C-4F17-947B-CF26EC6D4DDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StackOverflowBlazor.Shared", "StackOverflowBlazor\Shared\StackOverflowBlazor.Shared.csproj", "{00A844E8-FA3C-4ECB-AB53-CF1EE7BA8C94}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StackOverflowBlazor.Shared", "StackOverflowBlazor\Shared\StackOverflowBlazor.Shared.csproj", "{00A844E8-FA3C-4ECB-AB53-CF1EE7BA8C94}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InjectDiffImpConRoute", "InjectDiffImpConRoute\InjectDiffImpConRoute.csproj", "{DDD0D303-685C-4633-905D-6AFB3F2C40A6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorWasmApp", "BlazorWasmApp\BlazorWasmApp.csproj", "{73676658-786B-429D-86E6-DBB1E5D1F9FE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorComponentReference", "BlazorComponentReference\BlazorComponentReference.csproj", "{54702B12-2AD2-4C1E-83E3-2BB895665795}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorAppServerSide", "BlazorAppServerSide\BlazorAppServerSide.csproj", "{7C0D1083-8F95-4379-9D0B-6FD0109B49FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{54702B12-2AD2-4C1E-83E3-2BB895665795}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54702B12-2AD2-4C1E-83E3-2BB895665795}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54702B12-2AD2-4C1E-83E3-2BB895665795}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C0D1083-8F95-4379-9D0B-6FD0109B49FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C0D1083-8F95-4379-9D0B-6FD0109B49FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C0D1083-8F95-4379-9D0B-6FD0109B49FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C0D1083-8F95-4379-9D0B-6FD0109B49FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
