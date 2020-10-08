@@ -17,6 +17,22 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script>
+        window.setupDocReady = function () {
+            document.addEventListener('DOMContentLoaded', function () {
+                DotNet.invokeMethodAsync('BlazorWasmApp', 'FireWhenDocumentReadyAsync')
+                    .then(function (x) {
+                        console.log('document is ready' + x);
+                    });
+            }, false);
+        }        
+        //document.addEventListener('DOMContentLoaded', function () {
+        //    console.log('loaded not in .net');
+        //    document.addEventListener('DOMSubtreeModified', function () {
+        //        console.log('tree modified not in .net');
+        //    });
+        //});
+    </script>
 </body>
 
 </html>

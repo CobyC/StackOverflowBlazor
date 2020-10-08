@@ -1,7 +1,7 @@
-﻿@inherits InputText
+﻿@inherits InputBase<string>
 
-<InputText disabled="@_IsDisabled" @bind-Value="@CurrentValue" @attributes="AdditionalAttributes" class="@CssClass"
-           @oninput="EventCallback.Factory.CreateBinder<string>(this, __value => CurrentValueAsString = __value, CurrentValueAsString)" />
+<input disabled="@_IsDisabled" value="@CurrentValue" @attributes="AdditionalAttributes" class="@CssClass"
+       @oninput="EventCallback.Factory.CreateBinder<string>(this, OnInputAction, CurrentValueAsString)" />
 <button @onclick="ChangeDisabledState">
     @(_IsDisabled?"Enable":"Disable" )
 </button>
@@ -11,4 +11,13 @@
     private bool _IsDisabled { get; set; } = false;
 
     protected void ChangeDisabledState() => _IsDisabled = !_IsDisabled;
+
+    protected override bool TryParseValueFromString(string value, out string result, out string validationErrorMessage)
+    {
+        validationErrorMessage = null;
+        result = value;
+        return true;
+    }
+
+    private Action<string> OnInputAction { get => (_inputText) => CurrentValueAsString = _inputText; }
 }

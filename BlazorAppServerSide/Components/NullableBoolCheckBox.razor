@@ -1,0 +1,99 @@
+﻿@inherits InputBase<bool?>
+
+<input type="checkbox" value="@CurrentValue" @attributes="AdditionalAttributes" class="@CssClass" style="width:15px; height:15px;vertical-align:-2px;"
+       @onchange="EventCallback.Factory.CreateBinder<bool?>(this,OnChangeAction,this.CurrentValueAsBool)" hidden="@_HideCheckBox" />
+<label @onclick="SetValueToTrue" hidden="@(!_HideCheckBox)" style="width:15px;height:15px;margin-left:-5px;">[?]</label>
+
+@code {
+
+
+    bool _HideCheckBox { get; set; } = false;
+
+    bool? _CurrentValueAsBool;
+    private bool? CurrentValueAsBool
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(CurrentValueAsString))
+                _CurrentValueAsBool = null;
+            else
+            {
+                if (bool.TryParse(CurrentValueAsString, out bool _currentBool))
+                    _CurrentValueAsBool = _currentBool;
+                else
+                    _CurrentValueAsBool = null;
+            }
+
+            SetCheckBoxCheckedAttribute(_CurrentValueAsBool);
+
+            return _CurrentValueAsBool;
+        }
+        set => _CurrentValueAsBool = value;
+    }
+
+
+    void SetCheckBoxCheckedAttribute(bool? _currentValueAsBool)
+    {
+        bool _isChecked = _currentValueAsBool.HasValue ? _currentValueAsBool.Value : false;
+        var _checkBoxAttributes = AdditionalAttributes != null ? AdditionalAttributes.ToDictionary(kv => kv.Key, kv => kv.Value) : new Dictionary<string, object>(); ;
+
+        if (!_isChecked)
+        {
+            _ = _checkBoxAttributes.ContainsKey("checked") ? _checkBoxAttributes["checked"] = false : _checkBoxAttributes.TryAdd("checked", false);
+            if (!_currentValueAsBool.HasValue)
+                _HideCheckBox = true;
+        }
+        else
+        {
+            _HideCheckBox = false;
+            _ = _checkBoxAttributes.ContainsKey("checked") ? _checkBoxAttributes["checked"] = true : _checkBoxAttributes.TryAdd("checked", true);
+        }
+        AdditionalAttributes = _checkBoxAttributes;
+    }
+
+
+    protected override bool TryParseValueFromString(string value, out bool? result, out string validationErrorMessage)
+    {
+        validationErrorMessage = null;
+
+        if (string.IsNullOrEmpty(value))
+        {
+            result = null;
+        }
+        else
+        {
+            if (bool.TryParse(value, out bool _result))
+            {
+                result = _result;
+            }
+            else
+            {
+                validationErrorMessage = "Unable to parse value!";
+                result = null;
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private Action<Nullable<bool>> OnChangeAction
+    {
+        get => (_inputValue) =>
+        {
+            //ignore input value if previously false, to force it to null
+            if (this.CurrentValueAsString == bool.FalseString)
+            {
+                _inputValue = null;
+                this.CurrentValueAsString = string.Empty;
+            }
+            else
+                this.CurrentValueAsString = _inputValue.HasValue ? _inputValue.Value.ToString() : string.Empty;
+        };
+    }
+
+    void SetValueToTrue(MouseEventArgs e)
+    {
+        this.CurrentValueAsString = bool.TrueString;
+    }
+
+}

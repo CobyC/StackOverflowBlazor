@@ -52,4 +52,10 @@ else
 
         public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        Console.WriteLine("fetch data rendered.");
+    }
 }
